@@ -4,7 +4,7 @@
 
 // module.exports = function(app){
 //     app.post("/api/post", (req, res)=> {
-//         db.Workout.create(req.body).then(data=>{
+//         db.Exercise.create(req.body).then(data=>{
 //             res.json(data)
 //         }).catch(err=>{
 //             if(err){
@@ -12,4 +12,22 @@
 //             }
 //         })
 //     })
+//     app.get("/api/get", (req, res)=> {
+//         db.Exercise.find({}).then(data=>{
+//             res.json(data)
+//         }).catch(err=>{
+//             if(err){
+//                 throw err
+//             }
+//         })
+//     })
+    
+
+
+
+
+
+
+
+
 // }

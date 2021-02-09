@@ -21,12 +21,12 @@ app.use(express.static("public"));
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workoutdb", { useNewUrlParser: true });
 
 app.post("/api/exercise", (req, res)=> {
-    db.Exercise.create(req.body).then(data=>{
+    db.Exercise.create(req.body)
+    .then(({_id}) => db.Workout.findOneAndUpdate({workoutName: req.body.workoutid}, {$push: {exercises: _id}},{new: true}))
+    .then(data => {
         res.json(data)
     }).catch(err=>{
-        if(err){
-            throw err
-        }
+        res.json(err)
     })
 })
 app.post("/api/workout", (req, res)=> {
@@ -38,8 +38,8 @@ app.post("/api/workout", (req, res)=> {
         }
     })
 })
-app.get("/api/get", (req, res)=> {
-    db.Exercise.find({}).populate("workouts").then(data=>{
+app.get("/api/workout", (req, res)=> {
+    db.Workout.find({}).populate("exercises").then(data=>{
         res.json(data)
     }).catch(err=>{
         if(err){
@@ -47,6 +47,17 @@ app.get("/api/get", (req, res)=> {
         }
     })
 })
+app.get("/api/get", (req, res)=> {
+    db.Exercise.find({}).then(data=>{
+        res.json(data)
+    }).catch(err=>{
+        if(err){
+            throw err
+        }
+    })
+})
+
+
 
 
 

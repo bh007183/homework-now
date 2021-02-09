@@ -2,6 +2,7 @@
 const express = require("express");
 const logger = require("morgan");
 const mongoose = require("mongoose");
+const mongojs = require('mongojs')
 
 const PORT = process.env.PORT || 8080;
 
@@ -23,6 +24,15 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workoutdb", { u
 app.post("/api/exercise", (req, res)=> {
     db.Exercise.create(req.body)
     .then(({_id}) => db.Workout.findOneAndUpdate({workoutName: req.body.workoutid}, {$push: {exercises: _id}},{new: true}))
+    .then(data => {
+        res.json(data)
+    }).catch(err=>{
+        res.json(err)
+    })
+})
+app.put("/api/exercise", (req, res)=> {
+    db.Workout.updateOne({workoutName: req.body.workoutName},
+    {$push: {exercises:req.body._id}} )
     .then(data => {
         res.json(data)
     }).catch(err=>{
@@ -57,6 +67,26 @@ app.get("/api/get", (req, res)=> {
     })
 })
 
+app.delete("/api/exercise/:id", (req,res)=>{
+    db.Exercise.remove({_id: mongojs.ObjectId(req.params.id)}).then(data=>{
+        res.json(data)
+    }).catch(err=>{
+        if(err){
+            throw err
+        }
+    })
+
+})
+app.delete("/workout/:id", (req,res)=>{
+    db.Workout.remove({_id: mongojs.ObjectId(req.params.id)}).then(data=>{
+        res.json(data)
+    }).catch(err=>{
+        if(err){
+            throw err
+        }
+    })
+
+})
 
 
 
